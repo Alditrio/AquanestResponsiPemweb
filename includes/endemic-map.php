@@ -1,0 +1,445 @@
+<?php
+// includes/endemic-map.php - Peta Interaktif Biota Laut Endemik & Khas Nusantara
+// Menggunakan siluet peta vektor Indonesia resmi (100% Native SVG + Vanilla JS, Zero External API Keys)
+// Peta Fixed: touch-action: pan-y (tidak bisa digeser-geser/no drag) & 100% Clickable Hotspots
+
+$mapHotspots = [
+    [
+        'id' => 'hiu-paus',
+        'species_name' => 'Hiu Paus',
+        'scientific_name' => 'Rhincodon typus',
+        'slug' => 'hiu-paus',
+        'category' => 'Hiu & Pari',
+        'habitat' => 'Laut Dalam & Pelagis',
+        'location_name' => 'Teluk Cenderawasih',
+        'region' => 'Papua',
+        'status_code' => 'EN',
+        'status_label' => 'Terancam',
+        'depth' => '0 – 1900 m',
+        'size' => '1200 cm (12 m)',
+        'summary' => 'Ikan terbesar di samudra yang jinak, kerap berkumpul damai di sekitar bagan nelayan Kwatisore, Teluk Cenderawasih.',
+        'image' => 'assets/images/species/hiu-paus.jpg',
+        'x' => 85.4,
+        'y' => 44.5,
+        'icon' => '🦈',
+    ],
+    [
+        'id' => 'pari-manta',
+        'species_name' => 'Pari Manta Samudra',
+        'scientific_name' => 'Mobula birostris',
+        'slug' => 'pari-manta',
+        'category' => 'Hiu & Pari',
+        'habitat' => 'Laut Dalam & Pelagis',
+        'location_name' => 'Kepulauan Raja Ampat',
+        'region' => 'Papua Barat',
+        'status_code' => 'EN',
+        'status_label' => 'Terancam',
+        'depth' => '0 – 30 m',
+        'size' => '700 cm (7 m)',
+        'summary' => 'Raksasa anggun tak bersengat yang rutin menari di stasiun pembersihan karang Manta Ridge & Mansuar di jantung Segitiga Terumbu Karang.',
+        'image' => 'assets/images/species/pari-manta.jpg',
+        'x' => 77.1,
+        'y' => 41.1,
+        'icon' => '🦅',
+    ],
+    [
+        'id' => 'penyu-hijau',
+        'species_name' => 'Penyu Hijau',
+        'scientific_name' => 'Chelonia mydas',
+        'slug' => 'penyu-hijau',
+        'category' => 'Mamalia & Reptil Laut',
+        'habitat' => 'Padang Lamun',
+        'location_name' => 'Kep. Derawan & Sangalaki',
+        'region' => 'Kalimantan Timur',
+        'status_code' => 'EN',
+        'status_label' => 'Terancam',
+        'depth' => '1 – 40 m',
+        'size' => '120 cm',
+        'summary' => 'Salah satu suaka peneluran dan habitat pakan penyu hijau terbesar di Asia Tenggara dengan laguna karang jernih tak berarus.',
+        'image' => 'assets/images/species/penyu-hijau.jpg',
+        'x' => 49.3,
+        'y' => 27.4,
+        'icon' => '🐢',
+    ],
+    [
+        'id' => 'ikan-mandarin',
+        'species_name' => 'Ikan Mandarin',
+        'scientific_name' => 'Synchiropus splendidus',
+        'slug' => 'ikan-mandarin',
+        'category' => 'Ikan Bertulang Sejati',
+        'habitat' => 'Terumbu Karang',
+        'location_name' => 'Selat Lembeh & Bunaken',
+        'region' => 'Sulawesi Utara',
+        'status_code' => 'LC',
+        'status_label' => 'Risiko Rendah',
+        'depth' => '1 – 18 m',
+        'size' => '7 cm',
+        'summary' => 'Ikan karang kerdil dengan pola batik warna-warni berpendar yang melakukan ritual kawin senja hari di antara karang cabang Lembeh.',
+        'image' => 'assets/images/species/ikan-mandarin.jpg',
+        'x' => 62.1,
+        'y' => 24.8,
+        'icon' => '🐠',
+    ],
+    [
+        'id' => 'hiu-martil',
+        'species_name' => 'Hiu Martil Bergerigi',
+        'scientific_name' => 'Sphyrna lewini',
+        'slug' => 'hiu-martil',
+        'category' => 'Hiu & Pari',
+        'habitat' => 'Laut Dalam & Pelagis',
+        'location_name' => 'Laut Banda',
+        'region' => 'Maluku',
+        'status_code' => 'CR',
+        'status_label' => 'Kritis',
+        'depth' => '5 – 500 m',
+        'size' => '380 cm',
+        'summary' => 'Predator pelagis bermoncong martil (cephalofoil) yang terkenal bermigrasi dalam kawanan masif di palung dalam kepulauan rempah Banda.',
+        'image' => 'assets/images/species/hiu-martil.jpg',
+        'x' => 72.1,
+        'y' => 63.4,
+        'icon' => '🔨',
+    ],
+    [
+        'id' => 'ikan-mola-mola',
+        'species_name' => 'Ikan Mola-mola',
+        'scientific_name' => 'Mola mola',
+        'slug' => 'ikan-mola-mola',
+        'category' => 'Ikan Bertulang Sejati',
+        'habitat' => 'Laut Dalam & Pelagis',
+        'location_name' => 'Nusa Penida & Crystal Bay',
+        'region' => 'Bali',
+        'status_code' => 'DD',
+        'status_label' => 'Kurang Data',
+        'depth' => '10 – 480 m',
+        'size' => '330 cm',
+        'summary' => 'Ikan bertulang terberat di dunia dengan bentuk bundar pipih raksasa yang naik dari palung dingin saat musim upwelling Juli–Oktober.',
+        'image' => 'assets/images/species/ikan-mola-mola.jpg',
+        'x' => 46.8,
+        'y' => 74.5,
+        'icon' => '🌊',
+    ],
+    [
+        'id' => 'kima-raksasa',
+        'species_name' => 'Kima Raksasa',
+        'scientific_name' => 'Tridacna gigas',
+        'slug' => 'kima-raksasa',
+        'category' => 'Invertebrata & Moluska',
+        'habitat' => 'Terumbu Karang',
+        'location_name' => 'Taman Nasional Wakatobi',
+        'region' => 'Sulawesi Tenggara',
+        'status_code' => 'VU',
+        'status_label' => 'Rentan',
+        'depth' => '1 – 20 m',
+        'size' => '130 cm',
+        'summary' => 'Kerang raksasa penyaring air yang dapat hidup hingga 100 tahun di atol karang terluas Nusantara dengan mantel berlumur mikroalga bercahaya.',
+        'image' => 'assets/images/species/kima-raksasa.jpg',
+        'x' => 61.5,
+        'y' => 58.0,
+        'icon' => '🐚',
+    ],
+    [
+        'id' => 'dugong',
+        'species_name' => 'Dugong (Duyung)',
+        'scientific_name' => 'Dugong dugon',
+        'slug' => 'dugong',
+        'category' => 'Mamalia & Reptil Laut',
+        'habitat' => 'Padang Lamun',
+        'location_name' => 'Selat Pantar & Alor',
+        'region' => 'Nusa Tenggara Timur',
+        'status_code' => 'VU',
+        'status_label' => 'Rentan',
+        'depth' => '1 – 20 m',
+        'size' => '300 cm',
+        'summary' => 'Mamalia laut pemalu pemakan lamun sejati yang mendiami koridor suaka alam perairan Selat Pantar dan perairan Laut Sawu NTT.',
+        'image' => 'assets/images/species/dugong.jpg',
+        'x' => 62.5,
+        'y' => 74.5,
+        'icon' => '🧜‍♀️',
+    ],
+    [
+        'id' => 'belut-moray',
+        'species_name' => 'Belut Moray Raksasa',
+        'scientific_name' => 'Gymnothorax javanicus',
+        'slug' => 'belut-moray',
+        'category' => 'Ikan Bertulang Sejati',
+        'habitat' => 'Terumbu Karang',
+        'location_name' => 'Taman Nasional Komodo',
+        'region' => 'Nusa Tenggara Timur',
+        'status_code' => 'LC',
+        'status_label' => 'Risiko Rendah',
+        'depth' => '2 – 50 m',
+        'size' => '300 cm',
+        'summary' => 'Predator puncak celah terumbu karang yang sering bekerja sama berburu dengan ikan kerapu di perairan berarus kencang Pulau Komodo.',
+        'image' => 'assets/images/species/belut-moray.jpg',
+        'x' => 53.6,
+        'y' => 75.3,
+        'icon' => '🐍',
+    ],
+    [
+        'id' => 'penyu-sisik',
+        'species_name' => 'Penyu Sisik',
+        'scientific_name' => 'Eretmochelys imbricata',
+        'slug' => 'penyu-sisik',
+        'category' => 'Mamalia & Reptil Laut',
+        'habitat' => 'Terumbu Karang',
+        'location_name' => 'Kep. Seribu & Belitung',
+        'region' => 'Laut Jawa',
+        'status_code' => 'CR',
+        'status_label' => 'Kritis',
+        'depth' => '1 – 25 m',
+        'size' => '90 cm',
+        'summary' => 'Biota berparuh elang yang berstatus Kritis (CR), hidup memakan spons karang beracun untuk menjaga keseimbangan ekosistem karang dangkal.',
+        'image' => 'assets/images/species/penyu-sisik.jpg',
+        'x' => 31.4,
+        'y' => 71.1,
+        'icon' => '🐢',
+    ],
+];
+?>
+
+<!-- ========================================================
+     SEKSI PETA PERSEBARAN BIOTA LAUT ENDEMIK NUSANTARA
+     - Fixed Map (TIDAK BISA DI GESER / BEBAS DRAG)
+     - Full Interactive Click on Hotspots & Chips
+     - Zero External API Key (Native SVG & Data)
+     ======================================================== -->
+<section class="marine-map-section" id="peta">
+  <div class="container">
+    <div class="map-section-head">
+      <div class="eyebrow" style="color:var(--blueberry);">Peta Interaktif Biodiversitas <?= waveAccent() ?></div>
+      <h2 class="map-section-title">Pemetaan Wilayah Asal Biota Laut Nusantara</h2>
+      <p class="map-section-subtitle">
+        Jelajahi titik habitat asli biota laut ikonik dan endemik Indonesia dari Sabang sampai Merauke. 
+        Sentuh atau klik titik radar pada peta untuk melihat profil lengkap biota laut di sampingnya.
+      </p>
+    </div>
+
+    <!-- Map Stage Container (Fixed & Non-Draggable) -->
+    <div class="map-stage-wrapper">
+      
+      <!-- Fixed Vector Map Area -->
+      <div class="map-canvas-card" id="mapCanvas">
+        <div class="map-inner-stage">
+          <!-- SVG Archipelago of Indonesia (Sesuai Peta Resmi) -->
+          <svg class="map-archipelago-svg" viewBox="0 0 1400 584" preserveAspectRatio="xMidYMid meet" aria-label="Peta Vektor Kepulauan Indonesia">
+          <defs>
+            <!-- Water Gradient & Depth -->
+            <radialGradient id="oceanCanvasGlow" cx="50%" cy="45%" r="65%">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="60%" stop-color="#F1F6FB"/>
+              <stop offset="100%" stop-color="#E1EEF8"/>
+            </radialGradient>
+            
+            <linearGradient id="indoIslandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2D68C4"/>
+              <stop offset="60%" stop-color="#0D55AD"/>
+              <stop offset="100%" stop-color="#122B4B"/>
+            </linearGradient>
+
+            <filter id="coastalGlow" x="-8%" y="-8%" width="116%" height="116%">
+              <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0D55AD" flood-opacity="0.28"/>
+            </filter>
+            
+            <pattern id="marineGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(140, 193, 233, 0.25)" stroke-width="1"/>
+            </pattern>
+          </defs>
+
+          <!-- Ocean Base Background -->
+          <rect width="1400" height="584" fill="url(#oceanCanvasGlow)"/>
+          <rect width="1400" height="584" fill="url(#marineGrid)"/>
+
+          <!-- Latitude Grids & Equator Line -->
+          <line x1="20" y1="215" x2="1380" y2="215" stroke="#8CC1E9" stroke-dasharray="5 7" stroke-opacity="0.6" stroke-width="1.4"/>
+          <text x="45" y="208" fill="#438BC4" opacity="0.85" font-size="11" font-family="Inter, sans-serif" font-weight="700" letter-spacing="1.5">GARIS KHATULISTIWA 0°</text>
+
+          <text x="45" y="60" fill="#438BC4" opacity="0.65" font-size="10" font-family="Inter, sans-serif" font-weight="600">5° LU &middot; LAUT NATUNA UTARA</text>
+          <text x="45" y="550" fill="#438BC4" opacity="0.65" font-size="10" font-family="Inter, sans-serif" font-weight="600">10° LS &middot; SAMUDRA HINDIA</text>
+          <text x="1190" y="550" fill="#438BC4" opacity="0.65" font-size="10" font-family="Inter, sans-serif" font-weight="600">140° BT &middot; SAMUDRA PASIFIK</text>
+
+          <!-- Marine Trench / Bathymetry Aesthetic Depth Lines -->
+          <path d="M 950 310 C 1010 300, 1100 370, 1070 440 C 1040 500, 930 460, 950 310 Z" fill="none" stroke="#8CC1E9" stroke-opacity="0.3" stroke-width="40" stroke-linecap="round"/>
+          <text x="980" y="415" fill="#438BC4" opacity="0.45" font-size="13" font-weight="800" letter-spacing="3">PALUNG LAUT BANDA</text>
+
+          <path d="M 1030 170 C 1110 150, 1170 200, 1150 250" fill="none" stroke="#8CC1E9" stroke-opacity="0.25" stroke-width="26" stroke-linecap="round"/>
+          <text x="1030" y="150" fill="#438BC4" opacity="0.5" font-size="12" font-weight="800" letter-spacing="2">CORAL TRIANGLE</text>
+
+          <!-- ================= ISLAND PATHS (INDONESIA OFFICIAL SILHOUETTE) ================= -->
+          <g class="archipelago-islands" fill="url(#indoIslandGrad)" stroke="#438BC4" stroke-width="1" stroke-opacity="0.45" filter="url(#coastalGlow)">
+            <path d="M 850,519 L 847,519 L 845,520 L 842,523 L 840,524 L 837,524 L 835,526 L 835,529 L 836,531 L 838,531 L 841,528 L 843,527 L 846,527 L 851,522 Z" />
+            <path d="M 804,516 L 804,519 L 806,520 L 809,520 L 811,519 L 811,516 L 809,515 L 806,515 Z" />
+            <path d="M 724,488 L 724,491 L 729,495 L 741,495 L 744,498 L 749,499 L 761,511 L 763,512 L 768,512 L 770,511 L 776,505 L 776,502 L 770,496 L 766,496 L 753,483 L 750,483 L 748,486 L 745,487 L 743,484 L 739,485 L 739,486 L 737,488 L 728,487 Z" />
+            <path d="M 898,475 L 895,475 L 889,476 L 877,488 L 867,487 L 865,488 L 860,493 L 859,496 L 860,505 L 858,507 L 852,508 L 853,512 L 859,512 L 860,511 L 868,512 L 870,511 L 874,507 L 879,508 L 881,508 L 895,494 L 896,491 L 895,482 L 899,479 Z" />
+            <path d="M 879,456 L 880,459 L 883,459 L 885,456 L 888,455 L 899,455 L 898,451 L 883,451 L 881,452 L 880,453 L 880,454 Z" />
+            <path d="M 844,452 L 844,455 L 853,463 L 855,463 L 863,454 L 862,451 L 859,451 L 857,452 L 853,456 L 850,456 L 848,454 L 848,453 L 846,451 Z" />
+            <path d="M 747,465 L 749,467 L 777,467 L 781,471 L 783,472 L 788,472 L 791,471 L 793,468 L 796,467 L 798,468 L 802,472 L 805,472 L 810,467 L 815,467 L 816,468 L 821,468 L 823,467 L 825,464 L 828,464 L 830,463 L 839,455 L 837,451 L 835,453 L 835,454 L 834,455 L 832,456 L 829,456 L 822,463 L 819,464 L 817,463 L 814,460 L 803,459 L 801,460 L 798,463 L 795,464 L 786,460 L 782,456 L 780,455 L 778,455 L 777,456 L 774,456 L 769,451 L 766,451 L 761,456 L 756,456 L 753,460 L 748,460 L 747,462 Z" />
+            <path d="M 659,456 L 653,451 L 650,451 L 640,461 L 640,465 L 636,468 L 637,472 L 641,472 L 642,471 L 648,472 L 650,471 L 655,467 L 655,462 L 659,459 Z" />
+            <path d="M 728,462 L 722,456 L 719,455 L 703,456 L 701,455 L 699,453 L 699,448 L 696,447 L 694,448 L 693,448 L 692,454 L 697,459 L 701,459 L 703,464 L 697,465 L 695,467 L 693,467 L 685,459 L 682,459 L 681,460 L 678,460 L 675,456 L 672,456 L 669,460 L 664,460 L 663,462 L 663,465 L 664,466 L 664,469 L 660,472 L 661,476 L 680,476 L 682,475 L 686,471 L 691,471 L 692,472 L 696,472 L 698,471 L 703,466 L 706,464 L 707,464 L 708,465 L 708,466 L 710,468 L 726,467 L 728,465 Z" />
+            <path d="M 628,455 L 627,452 L 622,452 L 617,447 L 614,447 L 609,452 L 603,452 L 601,451 L 599,448 L 596,449 L 597,455 L 599,456 L 604,455 L 606,456 L 614,464 L 617,464 L 622,459 L 627,459 Z" />
+            <path d="M 1028,440 L 1028,442 L 1033,447 L 1036,446 L 1036,443 L 1035,441 L 1034,440 L 1032,439 Z" />
+            <path d="M 947,436 L 945,435 L 941,435 L 925,436 L 920,440 L 921,444 L 924,444 L 938,443 L 941,440 L 947,439 Z" />
+            <path d="M 1087,424 L 1084,424 L 1076,433 L 1075,440 L 1076,443 L 1079,443 L 1087,434 L 1088,427 Z" />
+            <path d="M 580,414 L 579,412 L 577,412 L 574,415 L 571,416 L 567,415 L 552,415 L 548,416 L 548,419 L 553,423 L 566,423 L 569,420 L 572,419 L 576,420 L 578,419 L 580,417 Z" />
+            <path d="M 332,408 L 332,411 L 334,412 L 353,411 L 358,416 L 362,415 L 367,416 L 366,420 L 363,422 L 363,425 L 365,427 L 385,427 L 389,431 L 392,432 L 397,431 L 401,435 L 404,436 L 409,435 L 415,440 L 420,440 L 426,435 L 449,435 L 453,439 L 465,439 L 469,443 L 473,443 L 477,447 L 481,447 L 485,451 L 488,452 L 505,451 L 510,456 L 513,456 L 518,451 L 525,451 L 529,455 L 532,456 L 548,456 L 554,451 L 561,451 L 570,460 L 577,459 L 581,463 L 584,464 L 589,463 L 594,468 L 595,464 L 591,461 L 592,443 L 586,436 L 584,435 L 577,436 L 573,440 L 558,440 L 554,436 L 550,436 L 543,429 L 544,422 L 536,415 L 526,416 L 522,412 L 518,412 L 514,408 L 511,407 L 498,408 L 495,405 L 495,400 L 491,399 L 488,400 L 488,405 L 484,409 L 484,413 L 481,416 L 462,416 L 458,412 L 449,412 L 448,414 L 443,414 L 442,412 L 439,411 L 430,412 L 423,405 L 423,401 L 417,395 L 414,395 L 412,398 L 407,398 L 405,395 L 398,396 L 388,387 L 380,388 L 377,392 L 374,392 L 370,388 L 367,387 L 351,387 L 348,388 L 347,392 L 348,397 L 338,407 Z" />
+            <path d="M 1116,380 L 1116,383 L 1118,384 L 1121,384 L 1123,383 L 1122,379 L 1118,379 Z" />
+            <path d="M 1175,372 L 1172,372 L 1168,377 L 1167,380 L 1168,385 L 1160,393 L 1159,396 L 1161,411 L 1162,411 L 1164,412 L 1167,411 L 1167,406 L 1175,398 L 1176,395 L 1176,376 Z" />
+            <path d="M 240,368 L 240,371 L 242,372 L 245,372 L 247,371 L 247,368 L 245,367 L 242,367 Z" />
+            <path d="M 843,344 L 841,344 L 836,349 L 836,353 L 834,355 L 832,355 L 830,352 L 825,352 L 823,356 L 824,361 L 820,364 L 821,368 L 823,368 L 824,367 L 826,367 L 828,369 L 829,375 L 830,375 L 832,376 L 834,375 L 838,371 L 843,371 L 844,367 L 843,365 L 840,362 L 839,360 L 839,355 L 840,353 L 843,350 L 844,348 Z" />
+            <path d="M 830,359 L 832,359 L 834,360 L 835,361 L 836,363 L 836,365 L 833,368 L 830,368 L 828,363 L 828,361 Z" />
+            <path d="M 840,332 L 841,336 L 845,336 L 847,335 L 847,332 L 845,331 L 842,331 Z" />
+            <path d="M 990,316 L 988,316 L 984,320 L 985,324 L 988,324 L 990,323 L 991,322 L 992,320 L 992,318 Z" />
+            <path d="M 927,312 L 928,314 L 933,319 L 937,319 L 941,323 L 944,324 L 952,324 L 954,323 L 960,317 L 960,314 L 950,304 L 947,303 L 940,303 L 937,304 L 933,308 L 928,309 L 928,310 Z" />
+            <path d="M 988,300 L 988,303 L 992,306 L 991,309 L 992,311 L 998,316 L 1001,316 L 1003,314 L 1003,310 L 1006,307 L 1009,307 L 1012,311 L 1014,312 L 1017,312 L 1018,311 L 1021,311 L 1024,315 L 1028,313 L 1028,308 L 1032,309 L 1032,310 L 1033,311 L 1036,311 L 1041,315 L 1045,315 L 1049,319 L 1053,319 L 1058,324 L 1061,324 L 1063,322 L 1064,315 L 1063,313 L 1054,304 L 1051,303 L 1042,304 L 1038,300 L 1034,300 L 1029,295 L 1026,295 L 1021,300 L 1015,299 L 993,299 Z" />
+            <path d="M 183,292 L 180,295 L 183,297 L 184,299 L 184,302 L 188,307 L 191,307 L 192,305 L 192,303 L 191,301 Z" />
+            <path d="M 399,289 L 399,292 L 400,301 L 396,304 L 396,307 L 398,308 L 402,307 L 402,306 L 404,304 L 406,304 L 408,307 L 412,306 L 415,302 L 416,299 L 415,292 L 413,291 L 410,291 L 409,292 L 406,292 L 403,288 Z" />
+            <path d="M 164,276 L 164,279 L 166,280 L 169,280 L 171,279 L 171,276 L 169,275 L 166,275 Z" />
+            <path d="M 1052,266 L 1051,264 L 1048,264 L 1045,268 L 1042,268 L 1041,267 L 1038,267 L 1036,268 L 1037,272 L 1040,271 L 1042,272 L 1044,275 L 1047,275 L 1052,269 Z" />
+            <path d="M 1208,264 L 1209,268 L 1220,267 L 1222,268 L 1226,272 L 1231,271 L 1231,269 L 1226,264 L 1224,263 Z" />
+            <path d="M 903,267 L 902,263 L 899,263 L 880,265 L 880,270 L 898,271 Z" />
+            <path d="M 335,261 L 332,265 L 332,269 L 328,272 L 329,276 L 334,276 L 335,275 L 341,275 L 348,282 L 348,285 L 347,286 L 347,289 L 356,299 L 361,299 L 366,304 L 371,303 L 371,301 L 367,297 L 369,295 L 370,295 L 372,293 L 372,290 L 370,288 L 367,287 L 362,288 L 355,281 L 356,271 L 355,269 L 351,265 L 350,260 L 348,259 L 346,259 L 344,261 L 344,266 L 341,268 L 339,266 L 339,260 Z" />
+            <path d="M 967,258 L 967,260 L 968,262 L 981,264 L 985,264 L 987,263 L 986,259 L 981,259 L 978,256 L 969,256 Z" />
+            <path d="M 850,251 L 848,253 L 847,256 L 848,258 L 855,258 L 854,252 L 852,251 Z" />
+            <path d="M 843,248 L 840,248 L 836,253 L 835,255 L 835,257 L 836,259 L 840,258 L 843,254 L 844,252 L 844,250 Z" />
+            <path d="M 142,243 L 140,245 L 140,255 L 144,258 L 144,263 L 149,263 L 152,267 L 155,267 L 156,265 L 156,262 L 151,257 L 151,252 L 147,249 L 147,244 L 145,244 L 144,243 Z" />
+            <path d="M 1200,236 L 1201,240 L 1206,240 L 1208,242 L 1208,247 L 1213,247 L 1217,251 L 1219,252 L 1221,252 L 1223,251 L 1223,249 L 1209,235 Z" />
+            <path d="M 1060,240 L 1064,250 L 1073,259 L 1078,255 L 1088,260 L 1093,259 L 1100,266 L 1099,273 L 1105,279 L 1155,280 L 1149,292 L 1146,292 L 1141,287 L 1130,287 L 1121,296 L 1111,296 L 1107,292 L 1100,296 L 1101,300 L 1109,299 L 1126,315 L 1126,320 L 1123,324 L 1124,331 L 1134,331 L 1139,326 L 1144,312 L 1146,312 L 1153,323 L 1157,323 L 1164,328 L 1173,327 L 1176,330 L 1176,335 L 1181,335 L 1189,343 L 1213,343 L 1233,355 L 1245,355 L 1249,359 L 1261,363 L 1280,382 L 1280,386 L 1284,390 L 1283,397 L 1292,406 L 1288,415 L 1296,422 L 1295,427 L 1281,428 L 1268,441 L 1264,454 L 1290,456 L 1295,455 L 1302,447 L 1305,447 L 1310,452 L 1313,452 L 1318,447 L 1325,447 L 1337,459 L 1341,459 L 1344,462 L 1344,466 L 1352,475 L 1356,474 L 1356,415 L 1351,409 L 1356,399 L 1356,295 L 1350,288 L 1338,288 L 1331,283 L 1318,284 L 1290,268 L 1282,268 L 1270,260 L 1261,260 L 1257,264 L 1253,264 L 1241,280 L 1224,280 L 1224,285 L 1201,312 L 1186,312 L 1175,297 L 1175,288 L 1171,289 L 1172,293 L 1170,295 L 1167,294 L 1159,280 L 1159,262 L 1164,257 L 1164,254 L 1157,248 L 1156,245 L 1159,240 L 1155,236 L 1152,236 L 1149,240 L 1142,240 L 1134,232 L 1130,232 L 1126,228 L 1108,227 L 1101,232 L 1097,232 L 1089,240 L 1080,240 L 1080,245 L 1073,252 L 1071,244 L 1065,239 Z" />
+            <path d="M 1155,300 L 1154,304 L 1149,308 L 1146,308 L 1144,306 L 1145,303 L 1150,299 Z" />
+            <path d="M 132,224 L 131,226 L 131,229 L 132,231 L 135,231 L 136,229 L 136,226 L 135,224 Z" />
+            <path d="M 960,227 L 970,235 L 972,237 L 972,239 L 974,240 L 979,239 L 979,236 L 977,235 L 972,234 L 971,232 L 971,228 L 967,228 L 965,227 L 963,224 Z" />
+            <path d="M 1052,220 L 1053,224 L 1060,225 L 1060,227 L 1062,228 L 1065,228 L 1069,224 L 1072,223 L 1077,224 L 1079,223 L 1079,220 L 1077,219 L 1071,220 L 1069,219 L 1067,216 L 1064,219 L 1064,221 L 1062,223 L 1059,222 L 1057,219 L 1054,219 Z" />
+            <path d="M 308,216 L 307,218 L 307,221 L 309,223 L 311,224 L 319,223 L 318,219 L 315,220 L 313,219 L 311,216 Z" />
+            <path d="M 304,184 L 304,187 L 309,191 L 312,190 L 312,187 L 311,185 L 310,184 L 308,183 Z" />
+            <path d="M 96,176 L 96,179 L 111,193 L 112,199 L 116,198 L 116,193 L 119,191 L 119,188 L 106,176 L 99,175 Z" />
+            <path d="M 1001,171 L 998,171 L 983,186 L 984,189 L 981,192 L 975,192 L 972,193 L 972,194 L 971,196 L 971,200 L 972,202 L 975,205 L 976,207 L 975,220 L 976,222 L 979,225 L 980,227 L 979,228 L 980,230 L 987,238 L 990,240 L 992,238 L 991,236 L 988,234 L 987,232 L 987,229 L 984,226 L 983,224 L 983,221 L 980,218 L 979,215 L 979,207 L 980,205 L 983,201 L 988,201 L 990,204 L 996,203 L 998,204 L 1001,207 L 1003,207 L 1004,205 L 1004,202 L 1002,200 L 1000,199 L 995,200 L 993,199 L 991,197 L 991,194 L 1003,182 L 1004,179 L 1003,173 Z" />
+            <path d="M 899,168 L 896,168 L 877,188 L 873,188 L 869,192 L 830,192 L 823,187 L 798,188 L 795,185 L 795,180 L 783,179 L 772,189 L 771,195 L 762,191 L 756,196 L 756,201 L 748,208 L 752,216 L 747,222 L 747,232 L 751,237 L 750,240 L 740,240 L 740,245 L 735,252 L 736,269 L 732,273 L 732,281 L 728,285 L 728,289 L 719,294 L 719,297 L 722,299 L 722,304 L 719,308 L 720,315 L 736,313 L 740,318 L 739,325 L 744,330 L 744,345 L 739,351 L 740,361 L 735,366 L 735,369 L 744,379 L 747,379 L 750,375 L 763,374 L 764,371 L 759,365 L 759,358 L 764,351 L 764,311 L 759,302 L 770,291 L 781,291 L 784,294 L 784,309 L 779,314 L 779,317 L 789,327 L 793,327 L 800,334 L 800,341 L 795,346 L 797,351 L 805,351 L 808,355 L 811,355 L 811,346 L 814,343 L 820,344 L 826,339 L 834,343 L 836,341 L 836,338 L 817,320 L 817,315 L 823,304 L 811,293 L 811,289 L 793,272 L 793,267 L 797,267 L 800,271 L 804,270 L 803,266 L 806,263 L 818,259 L 837,240 L 841,239 L 846,244 L 849,244 L 852,239 L 845,231 L 832,240 L 819,239 L 813,244 L 806,244 L 801,239 L 798,239 L 785,256 L 774,256 L 767,249 L 767,244 L 762,244 L 755,236 L 755,229 L 751,223 L 756,217 L 755,210 L 765,199 L 773,199 L 777,203 L 784,204 L 790,199 L 801,199 L 806,204 L 809,204 L 814,199 L 841,199 L 852,208 L 864,208 L 870,203 L 883,203 L 883,198 L 899,182 L 899,178 L 903,175 L 903,172 Z" />
+            <path d="M 220,157 L 221,163 L 227,162 L 226,156 Z" />
+            <path d="M 982,155 L 980,156 L 972,165 L 971,167 L 971,169 L 972,170 L 972,173 L 968,177 L 967,180 L 969,187 L 971,188 L 974,187 L 984,177 L 984,175 L 983,168 L 979,165 L 979,163 L 980,161 L 981,160 L 982,160 L 984,157 Z" />
+            <path d="M 1000,143 L 998,143 L 991,150 L 991,152 L 992,154 L 993,155 L 995,156 L 997,156 L 1004,149 L 1004,147 L 1003,145 L 1002,144 Z" />
+            <path d="M 55,133 L 55,136 L 56,138 L 62,140 L 69,147 L 71,148 L 73,148 L 75,147 L 75,144 L 70,140 L 68,139 L 65,139 L 58,132 Z" />
+            <path d="M 412,96 L 408,100 L 408,103 L 412,106 L 412,111 L 415,111 L 419,106 L 420,104 L 420,102 L 415,96 Z" />
+            <path d="M 688,106 L 671,91 L 633,92 L 627,100 L 628,117 L 624,121 L 624,129 L 612,136 L 616,145 L 609,148 L 603,154 L 604,161 L 600,165 L 600,173 L 597,176 L 579,175 L 573,180 L 562,180 L 550,172 L 535,171 L 528,177 L 528,181 L 525,184 L 521,184 L 517,188 L 491,187 L 485,192 L 478,192 L 455,169 L 455,165 L 451,160 L 440,173 L 440,177 L 436,181 L 435,204 L 444,214 L 444,221 L 440,225 L 440,230 L 448,234 L 448,239 L 455,240 L 451,246 L 452,251 L 461,247 L 468,254 L 468,261 L 464,264 L 464,267 L 472,274 L 472,290 L 475,294 L 472,297 L 473,300 L 484,297 L 491,304 L 498,303 L 502,299 L 517,299 L 520,302 L 520,315 L 523,315 L 526,311 L 544,312 L 551,307 L 552,300 L 556,301 L 561,307 L 569,307 L 572,315 L 575,315 L 578,311 L 589,311 L 600,322 L 600,335 L 603,335 L 606,331 L 611,331 L 614,327 L 618,327 L 622,323 L 630,323 L 638,315 L 640,317 L 639,328 L 640,331 L 643,331 L 647,326 L 648,315 L 643,309 L 643,302 L 647,298 L 647,290 L 655,283 L 653,279 L 649,280 L 647,278 L 652,273 L 652,270 L 649,268 L 649,263 L 662,251 L 666,251 L 674,239 L 683,239 L 684,231 L 679,225 L 679,210 L 683,206 L 687,194 L 698,188 L 704,192 L 723,190 L 724,187 L 723,184 L 718,184 L 706,172 L 702,172 L 691,161 L 691,158 L 699,151 L 699,148 L 683,133 L 683,128 L 679,128 L 675,125 L 679,116 L 672,115 L 673,111 L 686,111 Z" />
+            <path d="M 948,88 L 947,90 L 947,93 L 948,95 L 951,95 L 952,93 L 952,90 L 951,88 Z" />
+            <path d="M 40,60 L 40,63 L 44,66 L 44,71 L 48,74 L 48,78 L 78,108 L 85,107 L 96,118 L 96,122 L 112,138 L 111,145 L 117,151 L 129,155 L 137,163 L 141,163 L 144,166 L 143,176 L 148,182 L 147,188 L 152,194 L 156,206 L 161,211 L 165,211 L 172,218 L 172,222 L 188,238 L 188,242 L 192,246 L 192,250 L 204,270 L 203,280 L 220,298 L 220,302 L 233,315 L 237,315 L 244,322 L 244,326 L 261,343 L 265,343 L 277,355 L 289,359 L 292,362 L 292,366 L 310,384 L 312,381 L 307,377 L 310,371 L 313,371 L 324,380 L 327,379 L 328,372 L 332,373 L 340,383 L 344,382 L 343,370 L 348,363 L 348,343 L 343,337 L 343,334 L 348,327 L 343,321 L 343,318 L 352,309 L 352,306 L 343,297 L 344,294 L 333,283 L 315,283 L 315,277 L 307,269 L 308,259 L 303,253 L 303,248 L 298,248 L 292,243 L 282,244 L 275,237 L 275,234 L 283,227 L 281,223 L 277,224 L 275,222 L 277,219 L 287,215 L 287,212 L 274,200 L 261,212 L 256,211 L 257,207 L 264,201 L 262,196 L 256,195 L 257,191 L 264,192 L 267,191 L 267,188 L 262,184 L 251,186 L 247,181 L 248,175 L 245,171 L 240,172 L 243,178 L 238,180 L 226,168 L 218,168 L 215,165 L 215,157 L 210,152 L 204,152 L 203,159 L 194,156 L 187,149 L 187,145 L 175,137 L 175,129 L 170,124 L 166,124 L 158,116 L 146,112 L 134,100 L 130,100 L 127,97 L 127,88 L 122,88 L 119,85 L 119,76 L 114,76 L 106,68 L 70,68 L 52,55 L 47,55 Z" />
+            <path d="M 240,184 L 244,185 L 244,186 L 246,187 L 248,189 L 247,192 L 245,192 L 239,186 Z" />
+          </g>
+
+          <!-- Compass Rose / Arah Mata Angin -->
+          <g transform="translate(1310, 80)" opacity="0.8">
+            <circle cx="0" cy="0" r="26" fill="#FFFFFF" stroke="#8CC1E9" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <path d="M 0 -22 L 5 -5 L 22 0 L 5 5 L 0 22 L -5 5 L -22 0 L -5 -5 Z" fill="#0D55AD"/>
+            <path d="M 0 -22 L 5 -5 L 0 0 Z" fill="#438BC4"/>
+            <text x="-5" y="-28" fill="#0D55AD" font-size="12" font-weight="800" font-family="Inter, sans-serif">U</text>
+          </g>
+
+          <!-- Scale Indicator -->
+          <g transform="translate(60, 520)" opacity="0.8">
+            <line x1="0" y1="0" x2="100" y2="0" stroke="#0D55AD" stroke-width="2.5"/>
+            <line x1="0" y1="-5" x2="0" y2="5" stroke="#0D55AD" stroke-width="2"/>
+            <line x1="100" y1="-5" x2="100" y2="5" stroke="#0D55AD" stroke-width="2"/>
+            <text x="24" y="-8" fill="#0D55AD" font-size="10" font-family="Inter, sans-serif" font-weight="700">500 KM</text>
+          </g>
+        </svg>
+
+        <!-- ================= HOTSPOT PINS LAYER ================= -->
+        <div class="map-hotspots-layer" id="hotspotsLayer">
+          <?php foreach ($mapHotspots as $idx => $h): ?>
+          <button 
+            type="button" 
+            class="map-pin-btn <?= $idx === 0 ? 'active' : '' ?>" 
+            style="left: <?= $h['x'] ?>%; top: <?= $h['y'] ?>%;"
+            data-id="<?= e($h['id']) ?>"
+            data-title="<?= e($h['species_name']) ?>"
+            data-scientific="<?= e($h['scientific_name']) ?>"
+            data-slug="<?= e($h['slug']) ?>"
+            data-category="<?= e($h['category']) ?>"
+            data-habitat="<?= e($h['habitat']) ?>"
+            data-location="<?= e($h['location_name']) ?>, <?= e($h['region']) ?>"
+            data-status="<?= e($h['status_code']) ?>"
+            data-status-label="<?= e($h['status_label']) ?>"
+            data-depth="<?= e($h['depth']) ?>"
+            data-size="<?= e($h['size']) ?>"
+            data-summary="<?= e($h['summary']) ?>"
+            data-image="<?= e($h['image']) ?>"
+            aria-label="<?= e($h['species_name']) ?> - <?= e($h['location_name']) ?>"
+          >
+            <!-- Sonar Pulse Waves -->
+            <span class="sonar-ring r1"></span>
+            <span class="sonar-ring r2"></span>
+            
+            <!-- Pin Center Core -->
+            <span class="pin-core">
+              <span class="pin-avatar">
+                <img src="<?= e($h['image']) ?>" alt="<?= e($h['species_name']) ?>">
+              </span>
+            </span>
+
+            <!-- Tooltip Tag on Pin -->
+            <span class="pin-label-pill">
+              <span class="pin-label-dot"></span>
+              <span class="pin-label-text"><?= e($h['species_name']) ?></span>
+            </span>
+          </button>
+          <?php endforeach; ?>
+        </div>
+      </div><!-- /.map-inner-stage -->
+
+        <!-- Watermark / Coordinates Legend -->
+        <div class="map-status-legend">
+          <span class="legend-badge"><span class="legend-pulse"></span> 10 Lokasi Keanekaragaman Hayati</span>
+          <span class="legend-hint">Sentuh / Klik pin untuk detail</span>
+        </div>
+
+      </div><!-- /.map-canvas-card -->
+
+      <!-- ================= SPOTLIGHT CARD PREVIEW ================= -->
+      <aside class="map-spotlight-card" id="mapSpotlight" aria-live="polite">
+        <div class="spotlight-header">
+          <div class="spotlight-tags">
+            <span class="badge-status status-en" id="spotlightStatusBadge">EN (Terancam)</span>
+            <span class="spotlight-habitat-pill" id="spotlightHabitat">Laut Dalam &middot; Pelagis</span>
+          </div>
+          <button type="button" class="spotlight-close-btn" id="spotlightClose" aria-label="Tutup pratinjau">&times;</button>
+        </div>
+
+        <div class="spotlight-hero-img-wrap">
+          <img src="assets/images/species/hiu-paus.jpg" id="spotlightImg" alt="Hiu Paus">
+          <div class="spotlight-loc-chip" id="spotlightLoc">
+            <svg class="ico-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span id="spotlightLocText">Teluk Cenderawasih, Papua</span>
+          </div>
+        </div>
+
+        <div class="spotlight-content">
+          <h3 class="spotlight-title" id="spotlightTitle">Hiu Paus</h3>
+          <div class="spotlight-scientific" id="spotlightScientific">Rhincodon typus</div>
+          <p class="spotlight-summary" id="spotlightSummary">
+            Ikan terbesar di samudra yang jinak, kerap berkumpul damai di sekitar bagan nelayan Kwatisore, Teluk Cenderawasih.
+          </p>
+
+          <div class="spotlight-meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 17l-5 5-5-5M7 7l5-5 5 5"/></svg>
+                Kedalaman
+              </span>
+              <strong class="meta-val mono" id="spotlightDepth">Kedalaman: 0 – 1900 m</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M19 9l3 3-3 3M5 9l-3 3 3 3"/></svg>
+                Ukuran Tubuh
+              </span>
+              <strong class="meta-val mono" id="spotlightSize">Ukuran: 1200 cm (12 m)</strong>
+            </div>
+          </div>
+
+          <a href="species-detail.php?slug=hiu-paus" class="btn btn-primary spotlight-cta-btn" id="spotlightLink">
+            Buka Ensiklopedia Lengkap &rarr;
+          </a>
+        </div>
+      </aside>
+
+    </div><!-- /.map-stage-wrapper -->
+
+  </div>
+</section>
